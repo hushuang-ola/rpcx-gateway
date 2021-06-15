@@ -50,15 +50,6 @@ func (s *Server) RegisterHandler(base string, handler ServiceHandler) {
 
 func wrapServiceHandler(handler ServiceHandler) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-		if r.Header.Get(XServicePath) == "" {
-			servicePath := params.ByName("servicePath")
-			if strings.HasPrefix(servicePath, "/") {
-				servicePath = servicePath[1:]
-			}
-
-			r.Header.Set(XServicePath, servicePath)
-		}
-
 		servicePath := r.Header.Get(XServicePath)
 		messageID := r.Header.Get(XMessageID)
 		wh := w.Header()
@@ -72,7 +63,10 @@ func wrapServiceHandler(handler ServiceHandler) httprouter.Handle {
 		}
 
 		if err == nil {
-			w.Write(payload)
+			_, err := w.Write(payload)
+			if err != nil {
+				print(err)
+			}
 			return
 		}
 
@@ -85,7 +79,6 @@ func wrapServiceHandler(handler ServiceHandler) httprouter.Handle {
 
 		wh.Set(XMessageStatusType, "Error")
 		wh.Set(XErrorMessage, err.Error())
-		return
 	}
 }
 

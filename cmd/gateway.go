@@ -42,7 +42,10 @@ func main() {
 	gw := gateway.NewGateway("/rpc/:servicePath/:serviceMethod", httpServer, d, client.FailMode(*failmode), client.SelectMode(*selectMode), options)
 
 	httpServer.SetPing()
-	gw.Serve()
+	err = gw.Serve()
+	if err != nil {
+		print(err)
+	}
 }
 
 func createServiceDiscovery(regAddr string) (client.ServiceDiscovery, error) {
