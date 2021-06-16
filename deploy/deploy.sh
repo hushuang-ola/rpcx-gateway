@@ -1,12 +1,10 @@
 #!/bin/bash  
 
-# 只是方便分发二进制文件，初次部署机器，需要更改supervisor最大打开文件数限制
+# 只是方便分发二进制文件, 重启手动
 
 path="/home/admin/banban"
 targetPath="/home/webroot/gateway"
 logPath="/home/log"
-
-apt-get install supervisor -y
 
 if [ ! -d "$targetPath" ]; then
 	mkdir -p "$targetPath"
