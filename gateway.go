@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"sync"
 	"sync/atomic"
+	"time"
 
 	"github.com/smallnest/rpcx/client"
 )
@@ -88,7 +89,11 @@ func (g *Gateway) handler(r *http.Request, servicePath string) (meta map[string]
 		return nil, nil, err
 	}
 
-	return xc.SendRaw(context.Background(), req)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+
+	defer cancel()
+
+	return xc.SendRaw(ctx, req)
 }
 
 func getXClient(g *Gateway, servicePath string) (xc client.XClient, err error) {
